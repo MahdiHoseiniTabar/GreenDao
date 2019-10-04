@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
             userAdapter = new UserAdapter(this,repository.getUserList());
         recyclerView_user.setAdapter(userAdapter);
 
+        if (noteAdapter == null)
+            noteAdapter = new NoteAdapter(this,repository.getNoteList());
+        recyclerView_note.setAdapter(noteAdapter);
 
         button_addUser.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,6 +91,23 @@ public class MainActivity extends AppCompatActivity {
                 userAdapter.setUsers(repository.getUserList());
                 userAdapter.notifyDataSetChanged();
 
+            }
+        });
+
+        button_addNote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Note note = new Note();
+                if (editText_userId.getText().toString().isEmpty() || editText_userId.getText()==null){
+                    Toast.makeText(MainActivity.this, "آیدی معتبر نیست!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                note.setUserId(Long.valueOf(editText_userId.getText().toString()));
+                note.setText(editText_note.getText().toString());
+
+                repository.insertNote(note);
+                noteAdapter.setNotes(repository.getNoteList());
+                noteAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -173,9 +194,9 @@ public class MainActivity extends AppCompatActivity {
             }
 
             public void bind(Note note) {
-                textView_userId.setText(note.getUserId().toString());
-                textView_user.setText(note.getUser() + "(" + note.getUser().getRole().toString() +")");
-                textView_note.setText(note.getText());
+                textView_userId.setText(note.getUserId().toString() + "- ");
+                textView_user.setText(note.getUser().getUserName() + "(" + note.getUser().getRole().toString() +")");
+                textView_note.setText(note.getText() + "- ");
             }
         }
     }

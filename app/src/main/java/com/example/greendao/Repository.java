@@ -1,6 +1,9 @@
 package com.example.greendao;
 
+import android.util.Log;
+
 import com.example.greendao.model.DaoSession;
+import com.example.greendao.model.Note;
 import com.example.greendao.model.NoteDao;
 import com.example.greendao.model.User;
 import com.example.greendao.model.UserDao;
@@ -39,6 +42,19 @@ public class Repository {
         return userDao.queryBuilder()
                 .where(UserDao.Properties.UserName.eq(userName))
                 .unique();
+    }
+
+    public void insertNote(Note note){
+       Long id = noteDao.insert(note);
+        Log.i("Repository", "insertNote: " + note.getUser().getUserName());
+    }
+    public List<Note> getNoteList(){
+        return noteDao.loadAll();
+    }
+    public List<Note> getNote(Long userId){
+        return noteDao.queryBuilder()
+                .where(NoteDao.Properties.UserId.eq(userId))
+                .list();
     }
 
 }
